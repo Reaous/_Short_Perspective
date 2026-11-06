@@ -11,6 +11,7 @@ k.loadRoot("./"); // A good idea for Itch.io publishing later
 k.loadSprite("background","backgrounds/b2.jpg");
 k.loadSprite("mc","sprites/mc.png")
 k.loadSprite("lapy","sprites/lapy2.jpg")
+//k.loadSprite("phone","sprites/phone.jpg")
 
 
 k.loadSound("click","audio/click.mp3")
@@ -36,6 +37,9 @@ k.scene("start",() => {
 )
 
 k.scene("table", ()=> {
+
+const dialogue = { "lapy":{line:"A old laptop ... ",audio:"music"}, 
+                    "phone":{line:"A phone ;D, unfortunatly dead..."},audio:"none"}
 
 k.setGravity(800)
 
@@ -96,6 +100,20 @@ k.add([
     }
 ])
 
+k.add([
+    k.circle(50),
+    k.pos(5000,3800),
+        k.z(0),
+    k.scale(),
+    k.area(),
+    k.color('blue'),
+
+    "interaction",
+    {
+        s : "phone",
+    }
+])
+
 
 
 player.onCollide("interaction" ,(interactable) => {
@@ -106,6 +124,8 @@ let ifinteraction = false;
 let image ; 
 let text ;
 let textbox;
+let nowinteract;
+
 k.onClick("interaction", (interactable) => {
     ifinteraction = true;
     k.play("click")
@@ -117,6 +137,26 @@ k.onClick("interaction", (interactable) => {
             k.pos(),
             k.scale(0.8)
         ])
+
+    nowinteract = dialogue[interactable.s]
+
+
+    const dialoguescreen = k.add([
+        k.text(nowinteract.line,{size:30}),
+        k.pos(500,800),
+        k.z(3),
+        k.fixed()
+
+
+    ])
+
+    const dialoguebox =dialoguescreen.add([
+        k.rect(dialoguescreen.width+40,dialoguescreen.height+40),
+        k.z(.3),
+        k.color("black")
+    ])
+
+
         k.tween(0,1,1,(opa) => {image.opacity = opa ,text.opacity = opa ,textbox.opacity = opa} )
     text = k.add([
         k.text("Go back to scene by pressing b ",{size:32}),
@@ -138,9 +178,10 @@ k.onClick("interaction", (interactable) => {
     k.onKeyPress("b",() =>{
         if (ifinteraction ===true){
         k.tween(1,0,0.4,(opa) => (image.opacity= opa, text.opacity = opa,textbox.opacity = opa ))
+        ifinteraction= false;
         k.wait(1,()=> {
         k.destroyAll("i-view")
-        ifinteraction= false;
+
         })
     }})
 
