@@ -10,6 +10,10 @@ const k = kaplay({
 k.loadRoot("./"); // A good idea for Itch.io publishing later
 k.loadSprite("background","backgrounds/b2.jpg");
 k.loadSprite("mc","sprites/mc.png")
+k.loadSprite("lapy","sprites/lapy2.jpg")
+
+
+k.loadSound("click","audio/click.mp3")
 
 const speed = 400
 
@@ -47,7 +51,7 @@ const player =k.add([
     k.pos(3000,3800),
     k.scale(2),
     k.stay(),
-    k.area(500,500),
+    k.area(),
     k.body(),
     "player"
 ])
@@ -80,26 +84,67 @@ k.onKeyPress("space",()=> {
 
 k.add([
     k.circle(50),
-    k.pos(3000,3800),
+    k.pos(3500,3800),
     k.z(0),
-    "interaction"
+    k.scale(),
+    k.area(),
+    k.color('blue'),
+
+    "interaction",
+    {
+        s : "lapy",
+    }
 ])
 
 
 
-
-function explore() {
-    i = k.get("interactiontext")
-    o = k.get ("interaction")
-    i.opacity = 1
-    o.scale = 100
-}
-
-k.onUpdate(()=> {
-    if (player.isColliding ("interaction") ){
-        explore()
-    }
+player.onCollide("interaction" ,(interactable) => {
+    interactable.scaleTo(1.5);
 })
+
+let ifinteraction = false;
+let image ; 
+let text ;
+let textbox;
+k.onClick("interaction", (interactable) => {
+    ifinteraction = true;
+    k.play("click")
+    k.wait(0.4,()=> {
+        image = k.add([
+            k.sprite(interactable.s),
+            "i-view",
+            k.fixed(),
+            k.pos(),
+            k.scale(0.8)
+        ])
+        k.tween(0,1,1,(opa) => {image.opacity = opa ,text.opacity = opa ,textbox.opacity = opa} )
+    text = k.add([
+        k.text("Go back to scene by pressing b ",{size:32}),
+        k.fixed(),
+        k.pos(100,100),
+        "i-view",
+        k.z(2)
+    
+    ])
+    textbox= text.add([
+        k.rect(text.width+10,text.height+10),
+        k.color(rgb(0, 0, 0)),
+        k.z(0),
+        "i-view"
+        ])
+    })
+})
+
+    k.onKeyPress("b",() =>{
+        if (ifinteraction ===true){
+        k.tween(1,0,0.4,(opa) => (image.opacity= opa, text.opacity = opa,textbox.opacity = opa ))
+        k.wait(1,()=> {
+        k.destroyAll("i-view")
+        ifinteraction= false;
+        })
+    }})
+
+
 
 let x,y,z;
 
