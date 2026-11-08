@@ -12,7 +12,7 @@ k.loadSprite("background","backgrounds/b2.jpg");
 k.loadSprite("mc","sprites/mc.png")
 k.loadSprite("lapy","sprites/lapy2.jpg")
 k.loadSprite("phone","sprites/phone2.jpg")
-
+k.loadSprite("ground","backgrounds/ground1.jpg")
 
 k.loadSound("click","audio/click.mp3")
 
@@ -54,7 +54,6 @@ const player =k.add([
     k.sprite("mc"),
     k.pos(3000,3800),
     k.scale(2),
-    k.stay(),
     k.area(),
     k.body(),
     "player"
@@ -93,18 +92,25 @@ const jump = k.add ([
 
 //playah controls 
 
-k.onKeyDown("d",()=> {
-    player.move(speed,0)
-})
-k.onKeyDown("a", () => {
-    player.move(-speed,0)
-})
+let playerstop = false;
 
-k.onKeyPress("space",()=> {
-    if (player.isGrounded()) {
-    player.jump();
-    }
-})
+    k.onKeyDown("d",()=> {
+        if (playerstop === false){
+        player.move(speed,0)}
+    })
+    k.onKeyDown("a", () => {
+        if (playerstop === false){
+        player.move(-speed,0)}
+    })
+
+    k.onKeyPress("space",()=> {
+        if (player.isGrounded()) {
+        if (playerstop === false ){
+        player.jump();
+        }
+        }
+    })
+
 //playah controls ends here , :stop-sign-holding-cat-emoji:
 
 // interactables for my table//
@@ -222,24 +228,42 @@ k.onClick("interaction", (interactable) => {
 
 //end of fancy fancy interactable functions//
 
-
+let wannajump = false;
 let havecollide1 = false;
 k.onCollide("player","jump",()=> {
     if (havecollide1=== false ){
         havecollide1 = true;
         const text = k.add([
             k.text("wanna jump ? \n (press enter)",{size:64}),
-            k.pos(player.pos.x,player.pos.y - 500 ), 
-            k.z(2)
+            k.pos(player.pos.x,player.pos.y - 400 ), 
+            k.z(2),
+            "textjump"
         ])
         text.add ([
             k.rect(text.width+30,text.height+30),
-            k.color(rgb(30,30,39)),
-            k.z(0.3)
+            k.color(k.rgb(30,30,39)),
+            k.z(0.3),
+            "textjump"
         ])
+        playerstop= true;
+        wannajump=true;
     }
 })
 
+        k.onKeyPress("enter",()=> {
+        if (wannajump===true){
+            k.go("down")
+            }
+        })
+
+        k.onKeyPress( (key)=> {
+        if (wannajump == true){
+            if (key !== "enter"){
+                playerstop= false;
+            }
+        }
+
+        })
 
 let x,y,z;
 
@@ -251,4 +275,126 @@ player.onUpdate(()=> {
     k.setCamScale(0.4)
 });
 })
+
+
+k.scene("down", ()=> {
+
+k.setGravity(300)
+
+const background =k.add ([
+    k.sprite("ground"),
+    k.pos(1,1)
+])
+k.tween(0,1,0.5, (opa)=> background.opacity= opa,k.easings.easeoutbounce)
+})
+
+
+
+//playah and playsh's controls'//
+const player =k.add ([
+    k.sprite("mc","sprites/mc.png"),
+    k.pos(200,20),
+    k.area(),
+    k.body(),
+    "player",
+    k.scale(2)
+])
+
+k.onKeyDown ("a",()=> {
+    player.move(-speed,0)
+})
+k.onKeyDown("d",()=> {
+    player.move(speed,0)
+})
+//de end
+
+
+//fancy fancy interactable functions//
+
+k.onHover("interaction",(interaction) => {
+    k.tween(1,1.3,0.2,(scale) => interaction.scale = k.vec2(scale,scale) ,k.easings.easeoutcubic)
+})
+
+k.onHoverEnd("interaction",(interaction) => {
+    k.tween(1.3,1,0.2,(scale) => interaction.scale = k.vec2(scale,scale) ,k.easings.easeoutcubic)
+})
+
+player.onCollide("interaction" ,(interactable) => {
+    interactable.scaleTo(1.5);
+})
+
+let ifinteraction = false;
+let image ; 
+let text ;
+let textbox;
+let dialoguescreen;
+let dialoguebox;
+let nowinteract;
+
+k.onClick("interaction", (interactable) => {
+    ifinteraction = true;
+    k.play("click")
+    k.wait(0.2,()=> {
+        image = k.add([
+            k.sprite(interactable.s),
+            "i-view",
+            k.fixed(),
+            k.pos(),
+            k.scale(0.8)
+        ])
+
+    nowinteract = dialogue[interactable.s]
+
+
+    const dialoguescreen = k.add([
+        k.text(nowinteract.line,{size:30}),
+        k.pos(500,600),
+        k.z(3),
+        k.fixed(),
+        "i-view"
+
+    ])
+
+    const dialoguebox =dialoguescreen.add([
+        k.rect(dialoguescreen.width+40,dialoguescreen.height+40),
+        k.z(.3),
+        k.color("black")
+    ])
+
+
+        k.tween(0,1,1,(opa) => {image.opacity = opa ,text.opacity = opa ,textbox.opacity = opa} )
+    text = k.add([
+        k.text("Go back to scene by pressing b ",{size:32}),
+        k.fixed(),
+        k.pos(100,100),
+        "i-view",
+        k.z(2)
+    
+    ])
+    textbox= text.add([
+        k.rect(text.width+10,text.height+10),
+        k.color(rgb(0, 0, 0)),
+        k.z(0),
+        "i-view"
+        ])
+    })
+})
+
+    k.onKeyPress("b",() =>{
+        if (ifinteraction ===true){
+        k.tween(1,0,0.4,(opa) => (image.opacity= opa, text.opacity = opa,textbox.opacity = opa  ))
+        ifinteraction= false;
+        k.wait(1,()=> {
+        k.destroyAll("i-view")
+
+        })
+    }})
+
+//end of fancy fancy interactable functions//
+
+
+
+
+
+
 k.go("start");
