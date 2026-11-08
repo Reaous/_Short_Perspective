@@ -15,6 +15,7 @@ k.loadSprite("phone","sprites/phone2.jpg")
 k.loadSprite("ground","backgrounds/ground1.jpg")
 
 k.loadSound("click","audio/click.mp3")
+k.loadSound("impact","audio/impact.mp3")
 
 const speed = 600
 
@@ -279,35 +280,74 @@ player.onUpdate(()=> {
 
 k.scene("down", ()=> {
 
+k.setBackground("black")
+
 k.setGravity(300)
 
 const background =k.add ([
     k.sprite("ground"),
-    k.pos(1,1)
+    k.pos(1,1),
+    k.z(0),
 ])
 k.tween(0,1,0.5, (opa)=> background.opacity= opa,k.easings.easeoutbounce)
-})
+
 
 
 
 //playah and playsh's controls'//
 const player =k.add ([
     k.sprite("mc","sprites/mc.png"),
-    k.pos(200,20),
+    k.pos(500,150),
     k.area(),
     k.body(),
     "player",
-    k.scale(2)
+    k.scale(0.5),
+    k.z(10),
 ])
 
 k.onKeyDown ("a",()=> {
-    player.move(-speed,0)
+    player.move(-150,0)
 })
 k.onKeyDown("d",()=> {
-    player.move(speed,0)
+    player.move(150,0)
+})
+
+let impact = 0 ;
+if (player.isGrounded === true, ()=> {
+    if (impact >0){
+        k.play("impact")
+    }
 })
 //de end
 
+//collision(am i in hell)
+
+k.add([
+k.rect(1000,500),
+k.pos(0,500),
+k.area(),
+k.body({isStatic:true}),
+k.opacity(0),
+k.z(1)
+])
+
+k.add([
+    k.rect(10,4000),
+    k.pos(400,0),
+    k.area(),
+    k.body({isStatic:true}),
+    k.opacity(0),
+])
+
+k.add([
+k.rect(1170,500),
+k.pos(0,570),
+k.area(),
+k.body({isStatic:true}),
+k.opacity(0),
+k.z(1)
+])
+//collision end(yay yippe )
 
 //fancy fancy interactable functions//
 
@@ -319,9 +359,6 @@ k.onHoverEnd("interaction",(interaction) => {
     k.tween(1.3,1,0.2,(scale) => interaction.scale = k.vec2(scale,scale) ,k.easings.easeoutcubic)
 })
 
-player.onCollide("interaction" ,(interactable) => {
-    interactable.scaleTo(1.5);
-})
 
 let ifinteraction = false;
 let image ; 
@@ -392,9 +429,9 @@ k.onClick("interaction", (interactable) => {
 
 //end of fancy fancy interactable functions//
 
+})
 
 
 
 
-
-k.go("start");
+k.go("down");
