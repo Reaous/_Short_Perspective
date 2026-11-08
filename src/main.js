@@ -16,6 +16,7 @@ k.loadSprite("ground","backgrounds/ground1.jpg")
 
 k.loadSound("click","audio/click.mp3")
 k.loadSound("impact","audio/impact.mp3")
+k.loadSound("slide","audio/slide.mp3")
 
 const speed = 600
 
@@ -281,8 +282,8 @@ player.onUpdate(()=> {
 k.scene("down", ()=> {
 
 k.setBackground("black")
-
 k.setGravity(300)
+k.play("slide",{speed:1.2});
 
 const background =k.add ([
     k.sprite("ground"),
@@ -313,9 +314,10 @@ k.onKeyDown("d",()=> {
 })
 
 let impact = 0 ;
-if (player.isGrounded === true, ()=> {
-    if (impact >0){
+    player.onCollide ("ground" , () => {
+    if (impact === 0){
         k.play("impact")
+        impact ++
     }
 })
 //de end
@@ -328,7 +330,8 @@ k.pos(0,500),
 k.area(),
 k.body({isStatic:true}),
 k.opacity(0),
-k.z(1)
+k.z(1),
+"ground"
 ])
 
 k.add([
@@ -347,6 +350,25 @@ k.body({isStatic:true}),
 k.opacity(0),
 k.z(1)
 ])
+
+k.add([
+k.rect(1989,10),
+k.pos(0,800),
+k.area(),
+k.body({isStatic:true}),
+k.opacity(0),
+k.z(1)
+])
+
+const shift = k.add([
+    k.rect(10,1040),
+    k.pos(1450,0),
+    k.area(),
+    k.body({isStatic:true}),
+    k.opacity(0)
+
+])
+
 //collision end(yay yippe )
 
 //fancy fancy interactable functions//
@@ -429,9 +451,19 @@ k.onClick("interaction", (interactable) => {
 
 //end of fancy fancy interactable functions//
 
+
+player.onCollide("shift", ()=> {
+    k.go("hideout")
+
 })
 
 
+})
+
+k.scene("hideout", ()=> {
+    k.setBackground("black")
+
+})
 
 
 k.go("down");
