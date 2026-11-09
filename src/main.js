@@ -13,6 +13,7 @@ k.loadSprite("mc","sprites/mc.png")
 k.loadSprite("lapy","sprites/lapy2.jpg")
 k.loadSprite("phone","sprites/phone2.jpg")
 k.loadSprite("ground","backgrounds/ground1.jpg")
+k.loadSprite("text","sprites/cat.png")
 
 k.loadSound("click","audio/click.mp3")
 k.loadSound("impact","audio/impact.mp3")
@@ -282,8 +283,9 @@ player.onUpdate(()=> {
 k.scene("down", ()=> {
 
 k.setBackground("black")
-k.setGravity(300)
-k.play("slide",{speed:1.2});
+k.setGravity(200)
+k.wait(0.2, ()=> {
+k.play("slide",{speed:1.2});})
 
 const background =k.add ([
     k.sprite("ground"),
@@ -365,7 +367,8 @@ const shift = k.add([
     k.pos(1450,0),
     k.area(),
     k.body({isStatic:true}),
-    k.opacity(0)
+    k.opacity(0),
+    "shift"
 
 ])
 
@@ -373,14 +376,9 @@ const shift = k.add([
 
 //fancy fancy interactable functions//
 
-k.onHover("interaction",(interaction) => {
-    k.tween(1,1.3,0.2,(scale) => interaction.scale = k.vec2(scale,scale) ,k.easings.easeoutcubic)
-})
 
-k.onHoverEnd("interaction",(interaction) => {
-    k.tween(1.3,1,0.2,(scale) => interaction.scale = k.vec2(scale,scale) ,k.easings.easeoutcubic)
-})
 
+const dialogue = {"text": {line: "It seems like a hideout spot is in front of you ! "}}
 
 let ifinteraction = false;
 let image ; 
@@ -392,14 +390,14 @@ let nowinteract;
 
 k.onClick("interaction", (interactable) => {
     ifinteraction = true;
-    k.play("click")
-    k.wait(0.2,()=> {
+    k.wait(0,()=> {
         image = k.add([
             k.sprite(interactable.s),
             "i-view",
             k.fixed(),
             k.pos(),
-            k.scale(0.8)
+            k.scale(0.1),
+            k.opacity(0),
         ])
 
     nowinteract = dialogue[interactable.s]
@@ -421,9 +419,9 @@ k.onClick("interaction", (interactable) => {
     ])
 
 
-        k.tween(0,1,1,(opa) => {image.opacity = opa ,text.opacity = opa ,textbox.opacity = opa} )
+        k.tween(0,1,1,(opa) => {text.opacity = opa ,textbox.opacity = opa} )
     text = k.add([
-        k.text("Go back to scene by pressing b ",{size:32}),
+        k.text("Go fast ! ",{size:32}),
         k.fixed(),
         k.pos(100,100),
         "i-view",
@@ -441,7 +439,7 @@ k.onClick("interaction", (interactable) => {
 
     k.onKeyPress("b",() =>{
         if (ifinteraction ===true){
-        k.tween(1,0,0.4,(opa) => (image.opacity= opa, text.opacity = opa,textbox.opacity = opa  ))
+        k.tween(1,0,0.4,(opa) => ( text.opacity = opa,textbox.opacity = opa  ))
         ifinteraction= false;
         k.wait(1,()=> {
         k.destroyAll("i-view")
@@ -451,6 +449,18 @@ k.onClick("interaction", (interactable) => {
 
 //end of fancy fancy interactable functions//
 
+
+k.add([
+    k.circle(40),
+    k.pos(500,200),
+    k.color("blue"),
+    "interaction",
+    k.area(),
+    k.scale(),
+    {
+        s : "text"
+    }
+])
 
 player.onCollide("shift", ()=> {
     k.go("hideout")
