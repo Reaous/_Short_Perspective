@@ -14,6 +14,10 @@ k.loadSprite("lapy","sprites/lapy2.jpg")
 k.loadSprite("phone","sprites/phone2.jpg")
 k.loadSprite("ground","backgrounds/ground1.jpg")
 k.loadSprite("text","sprites/cat.png")
+k.loadSprite("h1","backgrounds/hidespot.jpg"),
+k.loadSprite("h2","backgrounds/hidespotn.jpg"),
+k.loadSprite("h3","backgrounds/hidespotf.jpg")
+
 
 k.loadSound("click","audio/click.mp3")
 k.loadSound("impact","audio/impact.mp3")
@@ -28,7 +32,7 @@ k.scene("start",() => {
 
 
     k.add([
-        k.text("You open your eyes in a room where you dont belong.\n Try not to be spotted\n\n\n\nPress enter to start.",{size:30}),
+        k.text("You open your eyes in a room where you dont belong.\n Try not to be spotted\n go find a hiding spot before the timer ends \n\n\n\nPress enter to start.",{size:30}),
         k.pos(100,100)
     ])
 
@@ -78,7 +82,7 @@ k.add([
     k.pos(2500,0),
     k.area(),
     k.body({isStatic:true}),
-    k.opacity(0.3),
+    k.opacity(0),
     "firsts"
 ])
 
@@ -87,7 +91,7 @@ const jump = k.add ([
     k.pos(7000,0),
     k.area(),
     k.body({isStatic:true}),
-    k.opacity(0.3),
+    k.opacity(0),
     "firsts",
     "jump"
 ])
@@ -118,7 +122,7 @@ let playerstop = false;
 
 // interactables for my table//
 k.add([
-    k.circle(50),
+    k.circle(80),
     k.pos(3200,3600),
     k.z(0),
     k.scale(),
@@ -132,7 +136,7 @@ k.add([
 ])
 
 k.add([
-    k.circle(50),
+    k.circle(80),
     k.pos(5000,3800),
     k.z(0),
     k.scale(),
@@ -376,7 +380,13 @@ const shift = k.add([
 
 //fancy fancy interactable functions//
 
+k.onHover("interaction",(interaction) => {
+    k.tween(1,1.3,0.2,(scale) => interaction.scale = k.vec2(scale,scale) ,k.easings.easeoutcubic)
+})
 
+k.onHoverEnd("interaction",(interaction) => {
+    k.tween(1.3,1,0.2,(scale) => interaction.scale = k.vec2(scale,scale) ,k.easings.easeoutcubic)
+})
 
 const dialogue = {"text": {line: "It seems like a hideout spot is in front of you ! "}}
 
@@ -451,8 +461,8 @@ k.onClick("interaction", (interactable) => {
 
 
 k.add([
-    k.circle(40),
-    k.pos(500,200),
+    k.circle(20),
+    k.pos(1000,400),
     k.color("blue"),
     "interaction",
     k.area(),
@@ -471,9 +481,100 @@ player.onCollide("shift", ()=> {
 })
 
 k.scene("hideout", ()=> {
-    k.setBackground("black")
+    k.setBackground("black");
 
+    const player = k.add([
+        k.sprite("mc"),
+        k.scale(1),
+        k.pos(150,600),
+        k.area(),
+        k.body(),
+        "player",
+        k.z(10)
+    ])
+
+
+let speed = 160;
+    k.onKeyDown("a",()=> {
+        player.move(-speed,0)
+    })
+
+        k.onKeyDown("d",()=> {
+        player.move(speed,0)
+    })
+
+        k.onKeyDown("w",()=> {
+        player.move(0,-speed)
+    })
+
+        k.onKeyDown("s",()=> {
+        player.move(0,speed)
+    })
+
+
+
+    const h1 = k.add([
+        k.sprite("h1"),
+        k.pos(),
+        k.opacity(1),
+        k.scale(0.8),
+        k.z(0)
+    ])
+
+    const h2 = k.add([
+        k.sprite("h2"),
+        k.pos(),
+        k.opacity(0),
+        k.scale(0.8),
+        k.z(0)
+    ])
+
+    const h3 = k.add([
+        k.sprite("h3"),
+        k.pos(),
+        k.opacity(0),
+        k.scale(0.8),
+        k.z(0)
+    ])
+
+
+//collisions (ahhhhh why someone save me )
+
+k.add([
+    k.rect(300,1060),
+    k.pos(1100,0),
+    k.area(),
+    k.body({isStatic:true}),
+    k.opacity(0.4)
+])
+
+k.add([
+    k.rect(1980,10),
+    k.area(),
+    k.pos(0,870),
+    k.body({isStatic:true}),
+    k.opacity(0.4),
+])
+
+k.add([
+    k.rect(10,800),
+    k.rotate(-140),
+    k.area(),
+    k.body({isStatic:true}),
+    k.opacity(0.4),
+    k.pos(0,870)
+
+])
+
+k.add([
+    k.rect(1000,10),
+    k.area(),
+    k.body({isStatic:true}),
+    k.opacity(0.4),
+    k.pos(0,340),
+    k.rotate(1)
+])
 })
 
 
-k.go("down");
+k.go("hideout");
