@@ -18,6 +18,7 @@ k.loadSprite("h1","backgrounds/hidespot.jpg"),
 k.loadSprite("h2","backgrounds/hidespotn.jpg"),
 k.loadSprite("h3","backgrounds/hidespotf.jpg")
 k.loadSprite("catyay","sprites/catyay.jpg")
+k.loadSprite("menu","backgrounds/menu.jpg")
 
 k.loadSound("music","audio/terra.mp3")
 k.loadSound("click","audio/click.mp3")
@@ -25,8 +26,49 @@ k.loadSound("impact","audio/impact.mp3")
 k.loadSound("slide","audio/slide.mp3")
 k.loadSound("yay","audio/yay.mp3")
 
-const speed = 600
+k.loadFont("f", "font/BebasNeue-Regular.ttf")
 
+k.scene("menu", ()=> {
+    k.add([
+        k.sprite("menu"),
+        k.pos(0,0),
+        k.z(0),
+        k.scale(5)
+    ])
+
+    const title = k.add([
+        k.text ("A Shorter Perspective", {font: "menu",size : 64}),
+        k.pos(500,200) 
+
+    ])
+    title.add = k.add ([
+        k.text("A game made with <3 by Reaous ", {font :"f",size:19}),
+        k.pos(700,300),
+    ])
+
+    const touch = k.add([
+        k.rect(1000,1000),
+        k.pos(0,0),
+        k.area(),
+        k.body(),
+        k.opacity(0),
+        k.z(10),
+        "touch"
+    ])
+
+    k.add([
+        k.text("click to enter ", {size:20}),
+        k.pos(500,600),
+    ])
+
+    k.onClick("touch" ,()=> {
+        k.go("start")
+    })
+})
+
+
+
+const speed = 600
 
 k.scene("start",() => {
 
@@ -34,8 +76,8 @@ k.scene("start",() => {
 
 
     k.add([
-        k.text("You open your eyes in a room where you dont belong.\n Try not to be spotted\n go find a hiding spot before the timer ends \n\n\n\nPress enter to start.",{size:30}),
-        k.pos(100,100)
+        k.text("You open your eyes in a room where you dont belong.\n Try not to be spotted\n FIND a hiding spot before the timer ends \n\n\n\nPress enter to start.",{size:30,font :"f"}),
+        k.pos(400,100)
     ])
 
     k.onKeyPress("enter",()=> {
@@ -149,6 +191,7 @@ k.add([
     "interaction",
     {
         s : "phone",
+        music :"click"
     }
 ])
 
@@ -180,7 +223,7 @@ let nowinteract;
 k.onClick("interaction", (interactable) => {
     ifinteraction = true;
     k.play("click")
-    k.play(interactable.music)
+    const music = k.play(interactable.music)
     k.wait(0.2,()=> {
         image = k.add([
             k.sprite(interactable.s),
@@ -194,7 +237,7 @@ k.onClick("interaction", (interactable) => {
 
 
     const dialoguescreen = k.add([
-        k.text(nowinteract.line,{size:30}),
+        k.text(nowinteract.line,{size:30,font:"f"}),
         k.pos(500,600),
         k.z(3),
         k.fixed(),
@@ -211,7 +254,7 @@ k.onClick("interaction", (interactable) => {
 
         k.tween(0,1,1,(opa) => {image.opacity = opa ,text.opacity = opa ,textbox.opacity = opa} )
     text = k.add([
-        k.text("Go back to scene by pressing b ",{size:32}),
+        k.text("Go back to scene by pressing b ",{size:32,font :"f"}),
         k.fixed(),
         k.pos(100,100),
         "i-view",
@@ -245,7 +288,7 @@ k.onCollide("player","jump",()=> {
     if (havecollide1=== false ){
         havecollide1 = true;
         const text = k.add([
-            k.text("wanna jump ? \n (press enter)",{size:64}),
+            k.text("wanna jump ? \n (press enter)",{size:64,font:"f"}),
             k.pos(player.pos.x,player.pos.y - 400 ), 
             k.z(2),
             "textjump"
@@ -418,7 +461,7 @@ k.onClick("interaction", (interactable) => {
 
 
     const dialoguescreen = k.add([
-        k.text(nowinteract.line,{size:30}),
+        k.text(nowinteract.line,{size:30,font: "f"}),
         k.pos(500,600),
         k.z(3),
         k.fixed(),
@@ -435,9 +478,9 @@ k.onClick("interaction", (interactable) => {
 
         k.tween(0,1,1,(opa) => {text.opacity = opa ,textbox.opacity = opa} )
     text = k.add([
-        k.text("Go fast ! ",{size:32}),
+        k.text("Go fast ! ",{size:32 ,font : "f"}),
         k.fixed(),
-        k.pos(100,100),
+        k.pos(600,300),
         "i-view",
         k.z(2)
     
@@ -608,7 +651,7 @@ const hole = k.add([
 k.onHover("hole",()=> {
     hole.scaleTo (1.32)
         const text2 = k.add ([
-        k.text("press f to hide with wooden plank ", {size : 34}),
+        k.text("press f to hide with wooden plank ", {size : 34, font : "f"}),
         k.pos(hole.pos.x -300,hole.pos.y-90),
         k.z(3),
         "view2"
@@ -633,7 +676,7 @@ k.onHoverEnd("hole", ()=> {
 
 k.onHover("hide", ()=> {
         const text = k.add ([
-        k.text("press enter to take wooden plank", {size : 34}),
+        k.text("press enter to take wooden plank", {size : 34, font : "f"}),
         k.pos(hide.pos.x -300,hide.pos.y-90),
         k.z(3),
         "view1"
@@ -692,4 +735,4 @@ k.onKeyPress("f", ()=> {
 
 })
 
-k.go("start");
+k.go("menu");
