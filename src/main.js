@@ -17,11 +17,12 @@ k.loadSprite("text","sprites/cat.png")
 k.loadSprite("h1","backgrounds/hidespot.jpg"),
 k.loadSprite("h2","backgrounds/hidespotn.jpg"),
 k.loadSprite("h3","backgrounds/hidespotf.jpg")
-
+k.loadSprite("catyay","sprites/catyay.jpg")
 
 k.loadSound("click","audio/click.mp3")
 k.loadSound("impact","audio/impact.mp3")
 k.loadSound("slide","audio/slide.mp3")
+k.loadSound("yay","audio/yay.mp3")
 
 const speed = 600
 
@@ -526,7 +527,7 @@ let speed = 160;
         k.pos(),
         k.opacity(0),
         k.scale(0.8),
-        k.z(0)
+        k.z(0.2)
     ])
 
     const h3 = k.add([
@@ -534,7 +535,7 @@ let speed = 160;
         k.pos(),
         k.opacity(0),
         k.scale(0.8),
-        k.z(0)
+        k.z(0.6)
     ])
 
 
@@ -545,7 +546,7 @@ k.add([
     k.pos(1100,0),
     k.area(),
     k.body({isStatic:true}),
-    k.opacity(0.4)
+    k.opacity(0)
 ])
 
 k.add([
@@ -553,7 +554,7 @@ k.add([
     k.area(),
     k.pos(0,870),
     k.body({isStatic:true}),
-    k.opacity(0.4),
+    k.opacity(0),
 ])
 
 k.add([
@@ -561,7 +562,7 @@ k.add([
     k.rotate(-140),
     k.area(),
     k.body({isStatic:true}),
-    k.opacity(0.4),
+    k.opacity(0),
     k.pos(0,870)
 
 ])
@@ -570,11 +571,120 @@ k.add([
     k.rect(1000,10),
     k.area(),
     k.body({isStatic:true}),
-    k.opacity(0.4),
+    k.opacity(0),
     k.pos(0,340),
-    k.rotate(1)
+    k.rotate(1),
+]);
+
+const hide = k.add([
+    k.circle(40),
+    k.pos(370,400),
+    k.area(),
+    k.body({isStatic:true}),
+    k.color("blue"),
+    k.z(3),
+    k.scale(1),
+    "hide",
+    "c1"
 ])
+
+const hole = k.add([
+    k.circle(40),
+    k.pos(990,400),
+    k.area(),
+    k.color("blue"),
+    k.body({isStatic:true}),
+    k.z(3),
+    k.scale(1),
+    "hole",
+    "c2"
+])
+
+
+k.onHover("hole",()=> {
+    hole.scaleTo (1.32)
+        const text2 = k.add ([
+        k.text("press f to hide with wooden plank ", {size : 34}),
+        k.pos(hole.pos.x -300,hole.pos.y-90),
+        k.z(3),
+        "view2"
+    ])
+
+    text2.add([
+        k.rect(text2.width +30,text2.height +30),
+        k.z(1),
+        k.color("black"),
+        "view2"
+    ])
 })
 
+k.onHoverEnd("hole", ()=> {
+    hole.scaleTo (1)
+    k.wait(1, ()=> {
+     k.destroyAll("view2")
+
+})
+})
+
+
+k.onHover("hide", ()=> {
+        const text = k.add ([
+        k.text("press enter to take wooden plank", {size : 34}),
+        k.pos(hide.pos.x -300,hide.pos.y-90),
+        k.z(3),
+        "view1"
+    ])
+
+    text.add([
+        k.rect(text.width +30,text.height +30),
+        k.z(1),
+        k.color("black"),
+        "view1"
+    ])
+    hide.scaleTo (1.32)
+})
+
+k.onHoverEnd("hide",()=> {
+    hide.scaleTo (1)
+    k.wait(1, ()=> {
+         k.destroyAll("view1")
+    })
+
+})
+
+let enter =1 ;
+let f =0 ;
+k.onKeyPress("enter", ()=>{
+    if (enter==1){
+        k.shake(1.4);
+        k.tween(0,1,1,opa => h2.opacity = opa );
+        enter++;
+        f ++;
+        k.destroyAll("c1")
+
+    }})
+
+const caty =k.add([
+    k.sprite("catyay"),
+    k.scale(0.5),
+    k.pos(40,60),
+    k.opacity(0),
+    k.z(4),
+])
+
+k.onKeyPress("f", ()=> {
+    if (f===1){
+        k.shake(4)
+        k.tween(0,1,1,opa => h3.opacity = opa );
+        k.tween(0,1,1,opa => caty.opacity = opa );
+        k.play("yay")
+        f++;
+        k.destroyAll("c2")
+    }
+})
+
+
+
+})
 
 k.go("hideout");
