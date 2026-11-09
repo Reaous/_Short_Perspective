@@ -19,6 +19,7 @@ k.loadSprite("h2","backgrounds/hidespotn.jpg"),
 k.loadSprite("h3","backgrounds/hidespotf.jpg")
 k.loadSprite("catyay","sprites/catyay.jpg")
 
+k.loadSound("music","audio/terra.mp3")
 k.loadSound("click","audio/click.mp3")
 k.loadSound("impact","audio/impact.mp3")
 k.loadSound("slide","audio/slide.mp3")
@@ -133,6 +134,7 @@ k.add([
     "interaction",
     {
         s : "lapy",
+        music :"music"
     }
 ])
 
@@ -178,6 +180,7 @@ let nowinteract;
 k.onClick("interaction", (interactable) => {
     ifinteraction = true;
     k.play("click")
+    k.play(interactable.music)
     k.wait(0.2,()=> {
         image = k.add([
             k.sprite(interactable.s),
@@ -482,6 +485,7 @@ player.onCollide("shift", ()=> {
 })
 
 k.scene("hideout", ()=> {
+    k.setGravity(0);
     k.setBackground("black");
 
     const player = k.add([
@@ -680,11 +684,12 @@ k.onKeyPress("f", ()=> {
         k.play("yay")
         f++;
         k.destroyAll("c2")
+        k.tween(1,0,1,opa => player.opacity = opa );
+
     }
 })
 
 
-
 })
 
-k.go("hideout");
+k.go("start");
