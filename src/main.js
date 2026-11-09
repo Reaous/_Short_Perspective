@@ -19,16 +19,22 @@ k.loadSprite("h2","backgrounds/hidespotn.jpg"),
 k.loadSprite("h3","backgrounds/hidespotf.jpg")
 k.loadSprite("catyay","sprites/catyay.jpg")
 k.loadSprite("menu","backgrounds/menu.jpg")
+k.loadSprite("hand","sprites/hand.png")
 
 k.loadSound("music","audio/terra.mp3")
 k.loadSound("click","audio/click.mp3")
 k.loadSound("impact","audio/impact.mp3")
 k.loadSound("slide","audio/slide.mp3")
 k.loadSound("yay","audio/yay.mp3")
+k.loadSound("suspense","audio/suspense.mp3")
+k.loadSound("spooky","audio/spooky.mp3")
 
 k.loadFont("f", "font/BebasNeue-Regular.ttf")
 
 k.scene("menu", ()=> {
+
+    const bgm = k.play("suspense")
+
     k.add([
         k.sprite("menu"),
         k.pos(0,0),
@@ -62,7 +68,11 @@ k.scene("menu", ()=> {
     ])
 
     k.onClick("touch" ,()=> {
+        bgm.paused;
+        k.shake(10)
+        k.wait(0.5, ()=> {
         k.go("start")
+        })
     })
 })
 
@@ -76,8 +86,14 @@ k.scene("start",() => {
 
 
     k.add([
-        k.text("You open your eyes in a room where you dont belong.\n Try not to be spotted\n FIND a hiding spot before the timer ends \n\n\n\nPress enter to start.",{size:30,font :"f"}),
+        k.text("You open your eyes in a room where you dont belong.\n Try not to be spotted\n FIND a hiding spot before he finds you.. \n\n\n\nPress enter to start.",{size:40,font :"f"}),
         k.pos(400,100)
+    ])
+
+
+    k.add([
+        k.text("(use wasd for movement and clicking blue circles for interactions_ " , {size:25 , font:"f"}),
+        k.pos(900,500),
     ])
 
     k.onKeyPress("enter",()=> {
@@ -728,6 +744,26 @@ k.onKeyPress("f", ()=> {
         f++;
         k.destroyAll("c2")
         k.tween(1,0,1,opa => player.opacity = opa );
+
+        k.wait(3, ()=> {
+            k.destroyAll(),
+            k.play("spooky")
+            const hand = k.add([
+                k.sprite("hand"),
+                k.pos(500,400),
+                k.scale(2),
+                k.rotate(6),
+                "hand"
+            ])
+            k.wait(0.5, ()=> {
+            k.destroyAll("hand"),
+            k.add([
+                k.text("HE GOT YOU \n \n \n \n \n \n \n (did u get scared?) \n\n\n\n FIN", {size:30,font :"f"}),
+                k.pos(300,300)
+            ])
+
+            })
+        })
 
     }
 })
